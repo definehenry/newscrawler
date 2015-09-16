@@ -6,8 +6,8 @@ var urlModule = require('url');
 var customeCrawler = require('./CustomCrawler');
 var chosunConfig = require('./config/chosun');
 
-var myCrawler = customeCrawler(chosunConfig(new Date()),'현대');
+var myCrawler = customeCrawler(chosunConfig(new Date()),'정부');
 
 
-myCrawler.start();
+myCrawler.startFromSeeds();
 
