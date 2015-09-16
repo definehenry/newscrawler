@@ -12,28 +12,55 @@ module.exports = function(url, config){
 var BizChosun = function(url, config) {
     this.config = config;
     this.url = url;
-    this.encoding = 'utf-8';
 };
 
 var _ = BizChosun.prototype;
 
+_._selectEncoding = function(){
+	var that = this,
+		encoding = null;
+	that.config.subdomain.some(function(subdomain){
+		var re = new RegExp(subdomain);
+		if(re.test(that.url)){
+			console.log('true');				
+			encoding = that.config.encoding[subdomain];
+			return true;
+		}
+	});
+	console.log('-------------------_selectEncoding-----------------');
+	console.log(encoding);
+	return encoding;
+};
 
-_.parseArticle = function(buf){
-	var that = this;
-    //console.log(buf);
-    $ = cheerio.load(iconv.decode(buf, that.encoding), {
+_.init = function(buf){
+	console.log('---------------Biz init----------------');
+    var that = this;
+    that.loaded = cheerio.load(iconv.decode(buf, that._selectEncoding()), {
     	normalizeWhitespace: true,
    		xmlMode: true
     });
+};
+
+_.parseTitle = function(){
+	var that = this,
+		$ = that.loaded;
+
+	return $('.title_author_2011', '#content').find($('#title_text')).text();
+};
+
+_.parseArticle = function(){
+	var that = this,
+		$ = that.loaded;
+    //console.log(buf);
 
     var result = [];
 	var dom = null;
-console.log('get article of chosun');	
 
-	dom = $('#news_body_id', '#csContent');
-	if(dom && dom.find($('.par')).html())
-		return dom.find($('.par')).html();
-	
+	console.log('get article of chosun');	
+
+//	dom = $('#news_body_id', '#csContent');
+//	if(dom && dom.find($('.par')).html())
+//		return dom.find($('.par')).html();
 	dom = $('.article', '#content');
 	if(dom){
 		return dom.html();
@@ -42,31 +69,62 @@ console.log('get article of chosun');
 		return 'parseArticle failed...';
 };
 
-_._parseAuthor = function(data){
+_.parseAuthor = function(){
+    var that = this,
+		$ = that.loaded;
 
+    var result = [];
+	return $('.title_author_2011', '#content').find('li').text();
 };
 
-_._parseWrittenTime = function(data){
+_.parseWrittenTime = function(){
+    var that = this,
+		$ = that.loaded;
 
+	var written = $('.date_ctrl_2011', '#content').text();
+	var reg = /([1-9][0-9]{3}.[0-9]{2}.[0-9]{2} [0-9]{2}:[0-9]{2})/gm;
+	var result = written.match(reg);
+	if(!result)
+		return null;
+	else
+		return new Date(result[0]);
+	//written = wriiten.replace("입력 : ","");
 };
 
-_._parseModifiedTime = function(data){
-
+_.parseModifiedTime = function(){
+    var that = this,
+		$ = that.loaded;	
+	var written = $('.date_ctrl_2011', '#content').text();
+	var reg = /([1-9][0-9]{3}.[0-9]{2}.[0-9]{2} [0-9]{2}:[0-9]{2})/gm;
+	var result = written.match(reg);
+	if(!result[1])
+		return null;
+	else
+		return new Date(result[1]);	//written = wriiten.replace("입력 : ","");
 };
 
-_._parseCategory = function(data){
-
+_.parseCategory = function(){
+    var that = this,
+		$ = that.loaded;	
+	return $('.art_title_2011', '#content').find('dl').find('dt').find('a').text();
 };
 
-_._parseImage = function(data){
-
+_.parseImage = function(){
+    var that = this,
+		$ = that.loaded;		
+	return $('.article', '#content').find('img').attr('src');
 };
 
-_._parsePaper = function(data){
-
+_.parsePaper = function(){
+    var that = this,
+		$ = that.loaded;		
+	return 0;
 };
 
-_._parseShare = function(data){
-
+_.parseShare = function(){
+    var that = this,
+		$ = that.loaded;		
+	return -1;
+	//return $('#article_sns2014', '#content').find('iframe').attr('src');
 };
 

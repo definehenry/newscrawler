@@ -12,60 +12,108 @@ module.exports = function(url, config){
 var ArtChosun = function(url, config) {
     this.config = config;
     this.url = url;
-    this.encoding = 'euc-kr';
 };
 
 var _ = ArtChosun.prototype;
 
-
-_._parseTitle = function(data){
-
+_._selectEncoding = function(){
+    var that = this,
+        encoding = null;
+    that.config.subdomain.some(function(subdomain){
+        var re = new RegExp(subdomain);
+        if(re.test(that.url)){
+            console.log('true');                
+            encoding = that.config.encoding[subdomain];
+            return true;
+        }
+    });
+    console.log('-------------------_selectEncoding-----------------');
+    console.log(encoding);
+    return encoding;
 };
 
-_.parseArticle = function(buf){
-	var that = this;
-    //console.log(buf);
-    $ = cheerio.load(iconv.decode(buf, that.encoding), {
+_.init = function(buf){
+    console.log('---------------ArtChosun init----------------');
+    var that = this;
+    that.loaded = cheerio.load(iconv.decode(buf, that._selectEncoding()), {
     	normalizeWhitespace: true,
    		xmlMode: true
     });
+};
+
+_.parseTitle = function(){
+    var that = this,
+        $ = that.loaded;
+
+    return $('.art_title','#contentsarea').find($('#title_text','.title_author')).text();
+};
+
+_.parseArticle = function(){
+    var that = this,
+        $ = that.loaded;
 
     var result = [];
 	var dom = null;
-console.log('get article of chosun');	
 
-	dom = $('.reportlist', '#contentsarea');
-	if(dom && dom.find($('#article')).text())
-		return dom.find($('#article')).text();
-	else
-		return 'parseArticle failed...';
+	return $('#article', '#contentsarea').html();
 };
 
-_._parseAuthor = function(data){
+_.parseAuthor = function(){
+    var that = this,
+        $ = that.loaded;
 
-};
-
-_._parseWrittenTime = function(data){
+    return $('.art_title','#contentsarea').find($('#author','.title_author')).find('li').text();
 
 };
 
-_._parseModifiedTime = function(data){
+_.parseWrittenTime = function(){
+    var that = this,
+        $ = that.loaded;
+    var written = $('.date_ctrl', '#contentsarea').find($('#date_text')).text();
+    var reg = /([1-9][0-9]{3}.[0-9]{2}.[0-9]{2} [0-9]{2}:[0-9]{2})/gm;
+    var result = written.match(reg);
+
+    if(!result)
+        return null;
+    else
+        return new Date(result[0]);
+};
+
+_.parseModifiedTime = function(){
+    var that = this,
+        $ = that.loaded;
+    var written = $('.date_ctrl', '#contentsarea').find($('#date_text')).text();
+    var reg = /([1-9][0-9]{3}.[0-9]{2}.[0-9]{2} [0-9]{2}:[0-9]{2})/gm;
+    var result = written.match(reg);
+
+    if(!result[1])
+        return null;
+    else
+        return new Date(result[1]);
+};
+
+_.parseCategory = function(){
+    var that = this,
+        $ = that.loaded;
+    return $('.art_title', '#contentsarea').find('em').find('a').text();
+};
+
+_.parseImage = function(){
+    var that = this,
+        $ = that.loaded;
+    return $('#article', '#contentsarea').find('img').attr('src');
 
 };
 
-_._parseCategory = function(data){
-
+_.parsePaper = function(){
+    var that = this,
+        $ = that.loaded;
+    return 0;
 };
 
-_._parseImage = function(data){
-
-};
-
-_._parsePaper = function(data){
-
-};
-
-_._parseShare = function(data){
-
+_.parseShare = function(){
+    var that = this,
+        $ = that.loaded;
+    return -1;
 };
 

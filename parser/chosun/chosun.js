@@ -32,123 +32,82 @@ _._setSubdominParser = function(){
 	});
 	console.log('--------------------------------subdomain----------');
 	console.log(subdomain);
-	this.domainParser = require('./'+subdomain)(that.url,that.config);
-};
-
-_.parseURL = function(buf){
-	return this.domainParser.parseURL(buf);
-
-	/*var that = this;
-    $ = cheerio.load(iconv.decode(buf, that._selectEncoding()), {
-    	normalizeWhitespace: true,
-   		xmlMode: true
-    });
-
-    var result = [];
-	var dom = $('.srch_result_area', '.srch_content');
-	//console.log(dom.html());
-	dom = dom.find('ul');
-	
-	dom.each(function(index, elem){
-
-		var link = $(this).find('li').find('a').attr('href');
-		var title = $(this).find('li').find('a').text();
-		//console.log(link);
-		//console.log($(this).find('dl').find('dt').find('a').attr('title'));
-
-		//myCrawler.queueURL(link);
-		if(link){
-			var parsedURL = urlParser.parse(link);
-			//that.crawler.queue.add(parsedURL.protocol,parsedURL.hostname,80,parsedURL.path);
-			result.push({
-				title : title,
-				link : link
-			});
-		}
-		//console.log($(this).find('dt').find('a').attr('href'));
-		//console.log($(this).find($('.f_l')).attr('href'));
-		//elem.find($('.fst')).find($('wrap_cont')).find($('cont_inner')).html()
-	});
-	return result;*/
-};
-
-_.getNextPage = function(buf){
-	
-	return this.domainParser.getNextPage(buf);
-
-	/*var that = this;
-    $ = cheerio.load(iconv.decode(buf, that._selectEncoding()), {
-    	normalizeWhitespace: true,
-   		xmlMode: true
-    });	
-
-    var result = [];
-	var dom = $('.main_pack', '#container');
-			//console.log(result.html());
-	var anchor = dom.find($('.paging','#main_pack')).find('.next');
-			//console.log(result);
-	if(anchor)
-		return 'http:' + anchor.attr('href');
+	if(subdomain)
+		this.domainParser = require('./'+subdomain)(that.url,that.config);
 	else
-		return null;*/
+		this.domainParser = null;
 };
 
-_._parseTitle = function(data){
-
-};
-
-_.parseArticle = function(buf){
-	var that = this;
-
-	return that.domainParser.parseArticle(buf);
-
-    //console.log(buf);
-   /* $ = cheerio.load(iconv.decode(buf, that._selectEncoding()), {
-    	normalizeWhitespace: true,
-   		xmlMode: true
-    });
-
-    var result = [];
-	var dom = null;
-console.log('get article of chosun');	
-
-	dom = $('#news_body_id', '#csContent');
-	if(dom && dom.find($('.par')).text())
-		return dom.find($('.par')).text();
-	
-	dom = $('.article', '#content');
-	if(dom){
-		return dom.text();
+_.init = function(buf){
+	if(this.domainParser){
+		this.domainParser.init(buf);
+		return true;
 	}
 	else
-		return 'parseArticle failed...';*/
+		return false;
 };
 
-_._parseAuthor = function(data){
-
+_.parseURL = function(){
+	return this.domainParser.parseURL();
 };
 
-_._parseWrittenTime = function(data){
-
-};
-
-_._parseModifiedTime = function(data){
-
-};
-
-_._parseCategory = function(data){
+_.getNextPage = function(){
+	
+	return this.domainParser.getNextPage();
 
 };
 
-_._parseImage = function(data){
+_.parseTitle = function(){
+	var that = this;
 
+	return that.domainParser.parseTitle();
 };
 
-_._parsePaper = function(data){
+_.parseArticle = function(){
+	var that = this;
 
+	return that.domainParser.parseArticle();
 };
 
-_._parseShare = function(data){
+_.parseAuthor = function(){
+	var that = this;
 
+	return that.domainParser.parseAuthor();
+};
+
+_.parseWrittenTime = function(){
+	var that = this;
+
+	return that.domainParser.parseWrittenTime();
+};
+
+_.parseModifiedTime = function(){
+	var that = this;
+
+	return that.domainParser.parseModifiedTime();
+};
+
+_.parseCategory = function(){
+	var that = this;
+
+	return that.domainParser.parseCategory();
+};
+
+_.parseImage = function(){
+	var that = this;
+	var result = that.domainParser.parseImage();
+	return result ? result : '';
+};
+
+_.parsePaper = function(){
+	var that = this;
+
+	return that.domainParser.parsePaper();
+};
+
+_.parseShare = function(){
+	var that = this;
+
+	return that.domainParser.parseShare();
 };
 

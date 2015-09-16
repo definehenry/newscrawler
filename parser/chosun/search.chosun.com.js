@@ -17,12 +17,32 @@ var SearchChosun = function(url, config) {
 
 var _ = SearchChosun.prototype;
 
-_.getNextPage = function(buf){
-	var that = this;
-    $ = cheerio.load(iconv.decode(buf, that.encoding), {
+_._selectEncoding = function(){
+	var that = this,
+		encoding = null;
+	that.config.subdomain.some(function(subdomain){
+		var re = new RegExp(subdomain);
+		if(re.test(that.url)){
+			console.log('true');				
+			encoding = that.config.encoding[subdomain];
+			return true;
+		}
+	});
+	return encoding;
+};
+
+_.init = function(buf){
+    var that = this;
+    	console.log('---------------SearchChosun init----------------');	
+    that.loaded = cheerio.load(iconv.decode(buf, that._selectEncoding()), {
     	normalizeWhitespace: true,
    		xmlMode: true
-    });	
+    });
+};
+
+_.getNextPage = function(){
+	var that = this,
+		$ = that.loaded;
 
     var result = [];
 	var dom = $('.result_box', '#csContent');
@@ -53,12 +73,9 @@ _.getNextPage = function(buf){
 	return result;
 };
 
-_.parseURL = function(buf){
-	var that = this;
-    $ = cheerio.load(iconv.decode(buf, that.encoding), {
-    	normalizeWhitespace: true,
-   		xmlMode: true
-    });
+_.parseURL = function(){
+	var that = this,
+		$ = that.loaded;
 
     var result = [];
 	var dom = $('.result_box', '#csContent');
@@ -86,61 +103,5 @@ _.parseURL = function(buf){
 		//elem.find($('.fst')).find($('wrap_cont')).find($('cont_inner')).html()
 	});
 	return result;
-};
-
-_._parseTitle = function(data){
-
-};
-
-_.parseArticle = function(buf){
-	var that = this;
-    //console.log(buf);
-    $ = cheerio.load(iconv.decode(buf, that.encoding), {
-    	normalizeWhitespace: true,
-   		xmlMode: true
-    });
-
-    var result = [];
-	var dom = null;
-console.log('get article of chosun');	
-
-	dom = $('#news_body_id', '#csContent');
-	if(dom && dom.find($('.par')).text())
-		return dom.find($('.par')).text();
-	
-	dom = $('.article', '#content');
-	if(dom){
-		return dom.text();
-	}
-	else
-		return 'parseArticle failed...';
-};
-
-_._parseAuthor = function(data){
-
-};
-
-_._parseWrittenTime = function(data){
-
-};
-
-_._parseModifiedTime = function(data){
-
-};
-
-_._parseCategory = function(data){
-
-};
-
-_._parseImage = function(data){
-
-};
-
-_._parsePaper = function(data){
-
-};
-
-_._parseShare = function(data){
-
 };
 

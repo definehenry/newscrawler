@@ -15,13 +15,21 @@ var Naver = function(url, config) {
 
 var _ = Naver.prototype;
 
+_.init = function(buf){
+    var that = this;
+    	console.log('---------------SearchChosun init----------------');	
+    that.loaded = cheerio.load(iconv.decode(buf, that._selectEncoding()), {
+    	normalizeWhitespace: true,
+   		xmlMode: true
+    });
+};
+
 _._selectEncoding = function(){
 	var that = this,
 		encoding = null;
 	that.config.subdomain.some(function(subdomain){
 		var re = new RegExp(subdomain);
-		if(re.test(that.url)){
-	console.log('true');				
+		if(re.test(that.url)){			
 			encoding = that.config.encoding[subdomain];
 			return true;
 		}
@@ -31,12 +39,9 @@ _._selectEncoding = function(){
 	return encoding;
 };
 
-_.parseURL = function(buf){
-	var that = this;
-    $ = cheerio.load(iconv.decode(buf, that._selectEncoding()), {
-    	normalizeWhitespace: true,
-   		xmlMode: true
-    });
+_.parseURL = function(){
+	var that = this,
+		$ = that.loaded;
 
     var result = [];
 	var dom = $('.srch_result_area', '.srch_content');
@@ -66,12 +71,9 @@ _.parseURL = function(buf){
 	return result;
 };
 
-_.getNextPage = function(buf){
-	var that = this;
-    $ = cheerio.load(iconv.decode(buf, that._selectEncoding()), {
-    	normalizeWhitespace: true,
-   		xmlMode: true
-    });	
+_.getNextPage = function(){
+	var that = this,
+		$ = that.loaded;
 
     var result = [];
 	var dom = $('.paging', '.srch_content').find('a');
