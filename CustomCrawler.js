@@ -60,7 +60,7 @@ _._setWrapper = function(object, method, wrapperFunc) {
 
 _.startFromSeeds = function(){
 	var that = this;
-/*	that.crawler.queue.add('http',that.config.naver.host,80, that.config.naver.path + that.keyword[that.config.naver.name] + that.config.naver.dateQuery, 1, function(err, result){
+	that.crawler.queue.add('http',that.config.naver.host,80, that.config.naver.path + that.keyword[that.config.naver.name] + that.config.naver.dateQuery, 1, function(err, result){
 		console.log(result);
 	});
 	that.crawler.queue.add('http',that.config.daum.host, 80, that.config.daum.path + that.keyword[that.config.daum.name] + that.config.daum.dateQuery, 1, function(err, result){
@@ -68,9 +68,9 @@ _.startFromSeeds = function(){
 	});
 	that.crawler.queue.add('http',that.config.news.host, 80, that.config.news.path + that.keyword[that.config.news.name] + that.config.news.dateQuery, 1, function(err, result){
 		console.log(result);
-	});*/
+	});
 
-	that.crawler.queue.add('http','app.chosun.com',80,'/site/data/html_dir/2015/09/16/2015091601824.html', 2);
+//	that.crawler.queue.add('http','app.chosun.com',80,'/site/data/html_dir/2015/09/16/2015091601824.html', 2);
 
 
 	that.conn.connect(function(err){
