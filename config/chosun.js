@@ -7,8 +7,6 @@ module.exports = function(d) {
 	var startDate = new Date(d),
 		endDate = new Date(d);
 
-	startDate.setHours(0);
-	startDate.setMinutes(0);
 	return {
 		naver: {
 			name : 'naver',
@@ -35,20 +33,38 @@ module.exports = function(d) {
 				'User-Agent':'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/43.0.2357.134 Safari/537.36'
 			}
 		},
+		daum : {
+			name : 'daum',
+			pattern : /daum.net/i,
+			url : 'search.daum.net',
+			host : 'search.daum.net',
+			subdomain: [
+				'search.daum.net'
+			],
+			keywordEncoding : 'utf-8',
+			encoding: {
+				'search.daum.net': 'utf-8'
+			},
+			parser : 'daum',
+			path : '/search?w=news&req=tab&cp=16EeZKAuilXKH5dzIt&cluster=n&viewio=i&repno=0&period=u&n=10&p=1&DA=NNS&q=',
+			dateQuery : '&sd=' + dateHelper.format('yyyyMMdd',startDate) + '000000' + '&ed=' + dateHelper.format('yyyyMMddhhmmss',endDate)
+		},
 		news: {
 			name: 'chosun',
 			pattern : /chosun.com/i,
 			url: 'search.chosun.com',
 			host: 'search.chosun.com',
 			subdomain: [
-				'search.chosun.com','biz.chosun.com', 'news.chosun.com', 'art.chosun.com'
+				'search.chosun.com','biz.chosun.com', 'news.chosun.com', 'art.chosun.com','danmee.chosun.com','app.chosun.com'
 			],
 			keywordEncoding : 'utf-8',				
 			encoding : {
 				'search.chosun.com' : 'utf-8',
 				'biz.chosun.com': 'utf-8',
+				'danmee.chosun.com' : 'euc-kr',
 				'news.chosun.com' : 'euc-kr',
-				'art.chosun.com' : 'utf-8'
+				'art.chosun.com' : 'euc-kr',
+				'app.chosun.com' : 'euc-kr'
 			},
 			parser: 'chosun',
 			path: '/search/news.search?pageno=0&orderby=news&naviarraystr=&kind=&cont1=&cont2=&cont5=&categoryname=&categoryd2=&c_scope=&premium=&query=',
